@@ -15,42 +15,14 @@
 
 ## 📁 项目结构
 
+**快速导航** → [scripts/](scripts/) · [data/](data/) · [figures/](figures/) · [project_report.html](project_report.html)
+
 ```
 .
-├── README.md                   ← 本文件
-├── LICENSE
-├── .gitignore
-│
-├── project_report.html         ← 完整项目报告（在浏览器打开，或 GitHub Pages）
-│
-├── scripts/
-│   ├── README.md               ← 脚本说明 + 迭代历史
-│   ├── 01_fetch_sequences.py   序列下载（UniProt / NCBI）
-│   ├── 02_score_mutations.py   ESM-2 零样本突变打分（WEEV / SFV）
-│   ├── 02b_score_vldlr.py      补充：VLDLR 受体侧打分（迭代记录）
-│   ├── 03_plot_heatmap.py      ESM-2 热图生成
-│   ├── 04_prepare_af3_inputs.py AF3 序列准备（含 JSON 上传失败记录）
-│   └── 05_analyze_af3.py       AF3 结果解析与可视化（最终版）
-│
-├── data/
-│   ├── README.md               ← 数据文件说明
-│   ├── alphavirus_sequences.fasta  6条甲病毒序列（ESM-2 输入）
-│   ├── sequences_info.tsv          序列元数据
-│   ├── all_scores.json             ESM-2 打分结果（WEEV / SFV / VLDLR）
-│   └── af3_results/            AF3 两轮预测（仅 summary JSON，轻量）
-│       ├── WEEV_WT_VLDLR/
-│       ├── WEEV_V265F_VLDLR/
-│       ├── WEEV_WT_PCDH10/
-│       ├── WEEV_V265F_PCDH10/
-│       ├── WEEV_WT_VLDLR_LA3/     ← 第二轮（LA3截短）
-│       └── WEEV_V265F_VLDLR_LA3/  ← 第二轮
-│
-└── figures/
-    ├── esm2_mutation_heatmap.png   ESM-2 零样本打分热图
-    ├── af3_summary_all.png         AF3 两轮6组对比总览 ⭐
-    ├── pae_WEEV_WT_VLDLR_LA3.png  最优预测 PAE 热图 ⭐
-    ├── pae_WEEV_V265F_VLDLR_LA3.png
-    └── highlight_combined.png      合并展示图
+├── project_report.html         ← 分析报告（GitHub Pages 在线阅读）
+├── scripts/                    ← 分析脚本（6个）
+├── data/                       ← 序列、ESM-2打分、AF3结果 JSON
+└── figures/                    ← 全部图表
 ```
 
 ---
