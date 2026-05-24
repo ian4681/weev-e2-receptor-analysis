@@ -15,14 +15,12 @@
 
 ## 📁 项目结构
 
-**快速导航** → [scripts/](https://github.com/ian4681/weev-e2-receptor-analysis/tree/main/scripts) · [data/](https://github.com/ian4681/weev-e2-receptor-analysis/tree/main/data) · [figures/](https://github.com/ian4681/weev-e2-receptor-analysis/tree/main/figures) · [在线分析报告](https://ian4681.github.io/weev-e2-receptor-analysis/)
-
 ```
 .
-├── project_report.html         ← 分析报告（GitHub Pages 在线阅读）
-├── scripts/                    ← 分析脚本（6个）
-├── data/                       ← 序列、ESM-2打分、AF3结果 JSON
-└── figures/                    ← 全部图表
+├── project_report.html
+├── scripts/
+├── data/
+└── figures/
 ```
 
 ---
