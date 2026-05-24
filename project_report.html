@@ -189,10 +189,11 @@
     基于 AlphaFold3 Server 的计算预测分析（两轮迭代）
   </span></h1>
   <div class="meta">
-    <span>📅 2026年5月</span>
-    <span>🔬 独立计算探索</span>
-    <span>📄 参考：Byrd et al., <em>Cell Reports</em> 2025</span>
-    <span>🛠 AlphaFold3 Server · Python · NumPy · Matplotlib</span>
+    <span>2026年5月</span>
+    <span>独立计算探索</span>
+    <span>参考：Byrd et al., <em>Cell Reports</em> 2025</span>
+    <span>AlphaFold3 Server · Python · NumPy · Matplotlib</span>
+    <span><a href="https://github.com/ian4681/weev-e2-receptor-analysis" style="color:var(--blue);text-decoration:none;">→ 代码与数据（GitHub）</a></span>
   </div>
 </header>
 
@@ -399,30 +400,36 @@ pae_AB = summary[<span class="st">"chain_pair_pae_min"</span>][<span class="num"
 <hr>
 
 <!-- ═══════════════════════════════════════════════════════ -->
-<h2>附录：项目文件结构</h2>
+<h2>附录：仓库文件结构</h2>
 
-<pre><code>02_定制层/
+<pre><code>weev-e2-receptor-analysis/
 ├── scripts/
-│   ├── 04_prepare_af3_inputs.py   <span class="cm"># 序列准备与验证</span>
+│   ├── 01_fetch_sequences.py      <span class="cm"># 序列下载（UniProt / NCBI）</span>
+│   ├── 02_score_mutations.py      <span class="cm"># ESM-2 零样本突变打分</span>
+│   ├── 02b_score_vldlr.py         <span class="cm"># VLDLR 受体侧打分（补丁版）</span>
+│   ├── 03_plot_heatmap.py         <span class="cm"># ESM-2 热图生成</span>
+│   ├── 04_prepare_af3_inputs.py   <span class="cm"># 序列准备与关键残基验证</span>
 │   └── 05_analyze_af3.py          <span class="cm"># JSON解析、PAE热图、接触概率、综合对比</span>
 ├── data/
-│   └── af3_results/               <span class="cm"># 6个job，每个含5个模型（.cif + .json）</span>
+│   ├── alphavirus_sequences.fasta
+│   ├── all_scores.json
+│   └── af3_results/               <span class="cm"># 两轮6个job的 summary JSON</span>
 │       ├── WEEV_WT_VLDLR/
 │       ├── WEEV_V265F_VLDLR/
 │       ├── WEEV_WT_PCDH10/
 │       ├── WEEV_V265F_PCDH10/
-│       ├── WEEV_WT_VLDLR_LA3/     <span class="cm"># 第二轮</span>
-│       └── WEEV_V265F_VLDLR_LA3/  <span class="cm"># 第二轮</span>
+│       ├── WEEV_WT_VLDLR_LA3/     <span class="cm"># 第二轮（LA3截短）</span>
+│       └── WEEV_V265F_VLDLR_LA3/
 └── figures/
-    ├── af3_summary_all.png         <span class="cm"># ⭐ 套磁信附件</span>
-    ├── pae_WEEV_WT_VLDLR_LA3.png  <span class="cm"># ⭐ 套磁信附件</span>
-    ├── highlight_combined.png      <span class="cm"># 两图合并版</span>
-    └── ...（其余8张备用）
+    ├── af3_summary_all.png
+    ├── pae_WEEV_WT_VLDLR_LA3.png
+    ├── esm2_mutation_heatmap.png
+    └── highlight_combined.png
 </code></pre>
 
 <footer>
-  独立计算探索项目 · 2026年5月 · 工具：AlphaFold3 Server / Python 3 / NumPy / Matplotlib / Pillow<br>
-  本报告诚实呈现方法局限，结果定性为"低置信度探索性预测"而非实验验证结论。
+  独立计算探索 · 2026年5月 · AlphaFold3 Server / Python 3 / NumPy / Matplotlib<br>
+  <a href="https://github.com/ian4681/weev-e2-receptor-analysis" style="color:var(--gray);text-decoration:none;">github.com/ian4681/weev-e2-receptor-analysis</a>
 </footer>
 
 </body>
