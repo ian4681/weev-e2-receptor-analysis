@@ -1,11 +1,280 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=project_report.html">
-<title>WEEV E2 V265F 受体向性切换探索</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEEV E2 V265F 受体向性切换 — AF3 + ESM-2 计算探索</title>
+<style>
+  :root {
+    --blue: #1a6faf;
+    --red: #c0392b;
+    --dark: #1c2833;
+    --gray: #566573;
+    --light: #f4f6f7;
+    --border: #d5d8dc;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--dark);
+    background: #fff;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ── Header ── */
+  header {
+    border-bottom: 3px solid var(--blue);
+    padding-bottom: 20px;
+    margin-bottom: 36px;
+  }
+  header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--blue);
+    line-height: 1.45;
+    margin-bottom: 10px;
+  }
+  .meta {
+    font-size: 13px;
+    color: var(--gray);
+    margin-bottom: 14px;
+  }
+  .meta span { margin-right: 16px; }
+  .gh-btn {
+    display: inline-block;
+    padding: 7px 16px;
+    background: var(--blue);
+    color: #fff;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  .gh-btn:hover { background: #155a8a; }
+
+  /* ── Sections ── */
+  h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--blue);
+    margin: 36px 0 12px;
+    padding-left: 10px;
+    border-left: 4px solid var(--blue);
+  }
+  p { margin-bottom: 10px; }
+
+  /* ── Callout boxes ── */
+  .callout {
+    border-left: 4px solid var(--blue);
+    background: var(--light);
+    padding: 11px 15px;
+    border-radius: 0 6px 6px 0;
+    margin: 10px 0;
+    font-size: 14px;
+  }
+  .callout.warn    { border-color: #e67e22; }
+  .callout.finding { border-color: #27ae60; }
+
+  /* ── Table ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  th {
+    background: var(--blue);
+    color: #fff;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td { padding: 7px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: var(--light); }
+  .best { font-weight: 700; color: var(--blue); }
+
+  /* ── Figures ── */
+  .fig-wrap { margin: 20px 0; text-align: center; }
+  .fig-wrap img {
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .fig-cap {
+    font-size: 13px;
+    color: var(--gray);
+    margin-top: 8px;
+    text-align: left;
+    padding: 0 4px;
+  }
+  .fig-cap strong { color: var(--dark); }
+
+  /* ── Footer ── */
+  footer {
+    margin-top: 56px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--gray);
+  }
+  footer a { color: var(--gray); text-decoration: none; }
+  footer a:hover { color: var(--blue); }
+</style>
 </head>
 <body>
-<a href="project_report.html">点击进入分析报告</a>
+
+<!-- ══ Header ══════════════════════════════════════════════════════ -->
+<header>
+  <h1>WEEV E2 V265F 受体向性切换的结构基础探索<br>
+    <span style="font-size:15px;font-weight:500;color:var(--gray);">
+      AlphaFold3 两轮结构预测 + ESM-2 零样本突变打分
+    </span>
+  </h1>
+  <div class="meta">
+    <span>2026年5月</span>
+    <span>独立计算探索</span>
+    <span>参考：Byrd et al., <em>Cell Reports</em> 2025</span>
+  </div>
+  <a class="gh-btn" href="https://github.com/ian4681/weev-e2-receptor-analysis">
+    GitHub Repository: 源码 / 数据 / 脚本 &rarr;
+  </a>
+  <div style="font-size:12px;color:var(--gray);margin-top:6px;">
+    github.com/ian4681/weev-e2-receptor-analysis
+  </div>
+</header>
+
+<!-- ══ 研究问题 ═══════════════════════════════════════════════════ -->
+<h2>研究问题</h2>
+
+<p><em>Cell Reports</em> 2025 报道，WEEV E2 蛋白第265位单点突变（V265F）足以将病毒受体偏好
+从 PCDH10 切换至 VLDLR。这一"单点氨基酸决定受体向性"的现象提示265位在结合界面上
+具有关键地位。</p>
+
+<div class="callout">
+  <strong>核心问题：</strong>V265F 究竟是直接改变了结合界面，
+  还是通过变构机制间接切换受体偏好？能否在计算层面捕捉到这一界面差异？
+</div>
+
+<!-- ══ 关键发现 ═══════════════════════════════════════════════════ -->
+<h2>关键发现</h2>
+
+<div class="callout finding">
+  <strong>发现一：V265 不在直接接触界面。</strong>
+  265位残基在所有6组预测中接触概率均接近于零（WT 和 V265F 均如此），
+  提示 V265F 通过影响 E2 整体构象（变构机制）而非直接插入受体口袋来切换受体偏好。
+</div>
+
+<div class="callout warn">
+  <strong>发现二：AF3 存在模板偏差，结果不等于结合亲和力。</strong>
+  PDB 9L1N 是 WEEV E2 WT 的晶体结构，AF3 对 WT 有完整模板支撑，
+  导致 WT 系统性高于 V265F（R2轮 &Delta;ipTM=0.110）。
+  这一差距反映模板偏差，不能直接解读为亲和力差异。
+</div>
+
+<div class="callout">
+  <strong>发现三：VLDLR 截短设计有效。</strong>
+  全长 VLDLR（873aa，8个LA重复）导致 AF3 信号稀释（ipTM=0.210）；
+  截短至 LA2-LA4 核心区（125aa）后，ipTM 升至 0.290，界面信号明显改善。
+  ESM-2 零样本打分 V265F = &minus;0.77，与"功能改变而非丧失"的实验结果定性一致。
+</div>
+
+<!-- ══ 预测结果汇总 ════════════════════════════════════════════════ -->
+<h2>预测结果汇总</h2>
+
+<p>两轮共6组预测（R1 全长受体；R2 截短 VLDLR 至 LA2-LA4）：</p>
+
+<table>
+  <tr><th>Job</th><th>轮次</th><th>ipTM</th><th>pae_AB (Å)</th><th>备注</th></tr>
+  <tr><td>WEEV_WT_VLDLR</td><td>R1</td><td>0.210</td><td>16.35</td><td>全长基线</td></tr>
+  <tr><td>WEEV_V265F_VLDLR</td><td>R1</td><td>0.160</td><td>20.18</td><td></td></tr>
+  <tr><td>WEEV_WT_PCDH10</td><td>R1</td><td>0.150</td><td>27.04</td><td>无模板，无界面信号</td></tr>
+  <tr><td>WEEV_V265F_PCDH10</td><td>R1</td><td>0.140</td><td>27.07</td><td></td></tr>
+  <tr class="best"><td>WEEV_WT_VLDLR_LA3</td><td>R2</td><td>0.290</td><td>13.33</td><td>最优 &mdash; LA3截短</td></tr>
+  <tr><td>WEEV_V265F_VLDLR_LA3</td><td>R2</td><td>0.180</td><td>17.29</td><td></td></tr>
+</table>
+<p style="font-size:13px;color:var(--gray);">ipTM &gt;0.7 = 高置信；0.5–0.7 = 中等；&lt;0.5 = 低置信。全部结果处于低置信区间，为探索性预测。</p>
+
+<!-- ══ 核心图表 ═════════════════════════════════════════════════════ -->
+<h2>核心图表</h2>
+
+<div class="fig-wrap">
+  <img src="figures/af3_summary_all.png" alt="AF3 两轮6组 ipTM 与 pae_AB 对比">
+  <div class="fig-cap">
+    <strong>图1：两轮6组预测的 ipTM（左）与 pae_AB（右）对比。</strong>
+    蓝色 = WT，红色 = V265F；深色 = 第二轮（LA3截短）。
+    VLDLR_LA3 WT 取得最高界面置信度（ipTM=0.290）；PCDH10 两组均无界面信号（约0.14）。
+  </div>
+</div>
+
+<div class="fig-wrap">
+  <img src="figures/pae_WEEV_WT_VLDLR_LA3.png" alt="最优模型 PAE 热图">
+  <div class="fig-cap">
+    <strong>图2：WEEV E2 WT + VLDLR LA2-LA4 最优模型 PAE 矩阵（541&times;541 token）。</strong>
+    绿色虚线 = 链间分界（pos 416）；黄色虚线 = V265 位点。
+    对角线蓝色区域 = 各链内部折叠置信；界面区域（右上/左下）仍偏红，
+    但相较全长 VLDLR 有所改善。
+  </div>
+</div>
+
+<div class="fig-wrap">
+  <img src="figures/esm2_mutation_heatmap.png" alt="ESM-2 零样本突变打分热图">
+  <div class="fig-cap">
+    <strong>图3：ESM-2 零样本突变打分热图。</strong>
+    WEEV E2 V265F = &minus;0.77（功能改变而非丧失）；
+    VLDLR P129H = &minus;2.83，W132A = &minus;7.37（必需接触残基，极度不耐突变）。
+  </div>
+</div>
+
+<!-- ══ 仓库文件 ════════════════════════════════════════════════════ -->
+<h2 style="display:flex;align-items:center;gap:12px;">
+  仓库文件
+  <a href="https://github.com/ian4681/weev-e2-receptor-analysis"
+     style="font-size:12px;font-weight:500;padding:3px 10px;background:var(--light);
+            color:var(--blue);border:1px solid var(--border);border-radius:4px;
+            text-decoration:none;">
+    GitHub Repository &rarr;
+  </a>
+</h2>
+
+<table style="font-size:13px;">
+  <tr>
+    <th style="width:30%;">目录 / 文件</th>
+    <th>内容</th>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/ian4681/weev-e2-receptor-analysis/tree/main/scripts"
+           style="color:var(--blue);text-decoration:none;">scripts/</a></td>
+    <td>6个分析脚本：序列下载、ESM-2打分、AF3输入准备、结果解析与可视化</td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/ian4681/weev-e2-receptor-analysis/tree/main/data"
+           style="color:var(--blue);text-decoration:none;">data/</a></td>
+    <td>甲病毒序列（FASTA）、ESM-2打分结果（JSON）、AF3两轮6组 summary JSON</td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/ian4681/weev-e2-receptor-analysis/tree/main/figures"
+           style="color:var(--blue);text-decoration:none;">figures/</a></td>
+    <td>全部图表（ipTM对比图、PAE热图、ESM-2热图）</td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/ian4681/weev-e2-receptor-analysis/blob/main/README.md"
+           style="color:var(--blue);text-decoration:none;">README.md</a></td>
+    <td>项目说明、主要结果、运行环境</td>
+  </tr>
+</table>
+
+<!-- ══ Footer ══════════════════════════════════════════════════════ -->
+<footer>
+  独立计算探索 &middot; 2026年5月 &middot; AlphaFold3 Server / Python 3 / ESM-2 / NumPy / Matplotlib<br>
+  <a href="https://github.com/ian4681/weev-e2-receptor-analysis">github.com/ian4681/weev-e2-receptor-analysis</a>
+</footer>
+
 </body>
 </html>

@@ -17,7 +17,7 @@
 
 ```
 .
-├── project_report.html
+├── index.html          ← 分析报告（即 GitHub Pages 展示页）
 ├── scripts/
 ├── data/
 └── figures/
@@ -89,7 +89,7 @@ AF3 预测通过 [alphafoldserver.com](https://alphafoldserver.com) 网页界面
 
 ## 完整报告
 
-完整分析报告（含图表与代码解读）：[在线阅读](https://ian4681.github.io/weev-e2-receptor-analysis/) | 或本地打开 [`project_report.html`](./project_report.html)
+完整分析报告（含图表与代码解读）：[在线阅读](https://ian4681.github.io/weev-e2-receptor-analysis/) | 或本地打开 [`index.html`](./index.html)
 
 ---
 
