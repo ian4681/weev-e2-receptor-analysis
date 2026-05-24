@@ -1,0 +1,29 @@
+# AF3 大文件（单个 full_data JSON 约 10-30 MB，cif 约 1 MB）
+data/af3_results/**/*full_data*.json
+data/af3_results/**/*.cif
+data/af3_results/**/job_request.json
+data/af3_results/**/msas/
+data/af3_results/**/templates/
+
+# ESM-2 模型权重（约 1.3 GB，不上传）
+*.pt
+*.pth
+
+# 本地序列文件（可重新从 UniProt 下载）
+data/vldlr_human.fasta
+data/pcdh10_human.fasta
+data/af3_inputs/
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 本地路径配置（脚本中路径为本机路径，运行前需手动修改）
+*.env

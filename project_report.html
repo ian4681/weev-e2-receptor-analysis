@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEEV E2 V265F 受体向性切换 — AF3 结构预测探索</title>
+<style>
+  :root {
+    --blue: #1a6faf;
+    --red: #c0392b;
+    --dark: #1c2833;
+    --gray: #566573;
+    --light: #f4f6f7;
+    --border: #d5d8dc;
+    --code-bg: #1e2329;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--dark);
+    background: #fff;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* Header */
+  header {
+    border-bottom: 3px solid var(--blue);
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+  }
+  header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--blue);
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .meta { font-size: 13px; color: var(--gray); margin-top: 4px; }
+  .meta span { margin-right: 16px; }
+
+  /* Section headings */
+  h2 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--blue);
+    margin: 40px 0 14px;
+    padding-left: 10px;
+    border-left: 4px solid var(--blue);
+  }
+  h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 22px 0 8px;
+  }
+  p { margin-bottom: 10px; }
+
+  /* Callout boxes */
+  .callout {
+    border-left: 4px solid var(--blue);
+    background: var(--light);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+  .callout.warn { border-color: #e67e22; }
+  .callout.finding { border-color: #27ae60; }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 14px 0;
+  }
+  th {
+    background: var(--blue);
+    color: #fff;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td { padding: 7px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: var(--light); }
+  .best { font-weight: 700; color: var(--blue); }
+
+  /* Code block */
+  pre {
+    background: var(--code-bg);
+    color: #abb2bf;
+    padding: 16px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-x: auto;
+    margin: 14px 0;
+    font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+  }
+  code { font-family: inherit; }
+  .kw { color: #c678dd; }
+  .fn { color: #61afef; }
+  .st { color: #98c379; }
+  .cm { color: #5c6370; font-style: italic; }
+  .num { color: #d19a66; }
+
+  /* Figures */
+  .fig-wrap {
+    margin: 20px 0;
+    text-align: center;
+  }
+  .fig-wrap img {
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .fig-cap {
+    font-size: 13px;
+    color: var(--gray);
+    margin-top: 8px;
+    text-align: left;
+    padding: 0 4px;
+  }
+  .fig-cap strong { color: var(--dark); }
+
+  /* Timeline */
+  .timeline { margin: 14px 0; }
+  .tl-item {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 12px;
+    align-items: flex-start;
+  }
+  .tl-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .tl-dot.r2 { background: #0a3d6b; }
+  .tl-text { flex: 1; }
+
+  /* Tag badges */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+  .badge-blue { background: #d6eaf8; color: var(--blue); }
+  .badge-red { background: #fadbd8; color: var(--red); }
+  .badge-green { background: #d5f5e3; color: #1e8449; }
+  .badge-gray { background: #eaecee; color: var(--gray); }
+
+  /* Divider */
+  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+  /* Footer */
+  footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--gray);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>WEEV E2 V265F 受体向性切换的结构基础探索<br>
+  <span style="font-size:16px;font-weight:500;color:#566573">
+    基于 AlphaFold3 Server 的计算预测分析（两轮迭代）
+  </span></h1>
+  <div class="meta">
+    <span>📅 2026年5月</span>
+    <span>🔬 独立计算探索</span>
+    <span>📄 参考：Byrd et al., <em>Cell Reports</em> 2025</span>
+    <span>🛠 AlphaFold3 Server · Python · NumPy · Matplotlib</span>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>1. 研究背景与问题来源</h2>
+
+<p>2025年发表于 <em>Cell Reports</em> 的研究（Byrd et al.）报道了一个引人注目的发现：
+西方马脑炎病毒（WEEV）E2 糖蛋白第265位的单点突变 <strong>V265F</strong> 足以改变病毒的受体向性——
+野生型（WT）利用 PCDH10 作为入胞受体，而 V265F 突变体则改用 VLDLR（低密度脂蛋白受体相关蛋白）。
+这一"单点氨基酸切换受体"的现象意味着265位在结合界面上具有核心地位。</p>
+
+<div class="callout">
+  <strong>核心问题</strong>：V265（Val）→ F265（Phe）的侧链变化具体如何影响 E2 与 VLDLR / PCDH10 的结合界面？
+  能否通过 AlphaFold3 在计算层面预测并比较两种构象的界面差异？
+</div>
+
+<p>VLDLR 含有8个 LA（ligand-binding）重复结构域，文献已明确 LA3（UniProt P98155, pos 106–145）
+是甲病毒结合的核心区域，关键残基为 P129 / W132 / D135 / E137 / D139。
+PDB 中已有 WEEV E2 WT 的晶体结构（PDB <strong>9L1N</strong>），但尚无 E2-VLDLR 复合物结构。
+这正是 AF3 预测可以发挥作用的空间。</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>2. 实验设计：两轮迭代</h2>
+
+<p>本次分析分两轮提交，每轮解决不同问题：</p>
+
+<div class="timeline">
+  <div class="tl-item">
+    <div class="tl-dot">R1</div>
+    <div class="tl-text">
+      <strong>第一轮（全长受体，2026-05-23）</strong><br>
+      4个 job：WT / V265F × VLDLR全长（873aa）/ PCDH10胞外域（686aa）<br>
+      <span class="badge badge-gray">目的</span> 建立基线，验证 AF3 是否能区分两种受体
+    </div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-dot r2">R2</div>
+    <div class="tl-text">
+      <strong>第二轮（LA3截短，2026-05-23）</strong><br>
+      2个 job：WT / V265F × VLDLR LA2-LA4（pos 66–190，125aa）<br>
+      <span class="badge badge-blue">动机</span> 全长VLDLR有8个LA重复，AF3不知该对接哪个，导致信号被稀释；
+      截短至真实结合区（LA3±各一个重复）以提升信噪比
+    </div>
+  </div>
+</div>
+
+<h3>输入序列</h3>
+<table>
+  <tr><th>序列</th><th>来源</th><th>长度</th></tr>
+  <tr><td>WEEV E2 WT</td><td>PDB 9L1N Chain B（71V株）</td><td>416 aa</td></tr>
+  <tr><td>WEEV E2 V265F</td><td>同上，pos265 V→F 人工突变</td><td>416 aa</td></tr>
+  <tr><td>VLDLR 全长</td><td>UniProt P98155</td><td>873 aa</td></tr>
+  <tr><td>PCDH10 胞外域</td><td>UniProt Q9Y5H8, pos 25–710</td><td>686 aa</td></tr>
+  <tr><td>VLDLR LA2–LA4</td><td>UniProt P98155, pos 66–190</td><td>125 aa</td></tr>
+</table>
+
+<p>WT 与 V265F 的唯一序列差异（pos 265，0-indexed=264）：</p>
+<pre><code><span class="cm"># WT</span>
+...LTPT<span class="st">V</span>CPVP...
+
+<span class="cm"># V265F</span>
+...LTPT<span class="st">F</span>CPVP...
+</code></pre>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>3. 关键代码</h2>
+
+<h3>3.1 序列准备（<code>04_prepare_af3_inputs.py</code>，节选）</h3>
+<pre><code><span class="kw">import</span> requests
+
+<span class="cm"># 从 UniProt 获取 VLDLR LA2-LA4 截短版（pos 66-190）</span>
+resp = requests.<span class="fn">get</span>(<span class="st">"https://rest.uniprot.org/uniprotkb/P98155.fasta"</span>)
+vldlr_full = <span class="st">""</span>.<span class="fn">join</span>(resp.text.<span class="fn">split</span>(<span class="st">"\n"</span>)[<span class="num">1</span>:])
+vldlr_la3 = vldlr_full[<span class="num">65</span>:<span class="num">190</span>]  <span class="cm"># 0-indexed，覆盖 LA2+LA3+LA4</span>
+
+<span class="cm"># 验证关键结合残基全部在截取范围内</span>
+binding_residues = {<span class="num">129</span>: <span class="st">'P'</span>, <span class="num">132</span>: <span class="st">'W'</span>, <span class="num">135</span>: <span class="st">'D'</span>, <span class="num">137</span>: <span class="st">'E'</span>, <span class="num">139</span>: <span class="st">'D'</span>}
+<span class="kw">for</span> pos, aa <span class="kw">in</span> binding_residues.<span class="fn">items</span>():
+    local_idx = pos - <span class="num">66</span>  <span class="cm"># 转换为截短版索引</span>
+    <span class="fn">assert</span> vldlr_la3[local_idx] == aa, f<span class="st">"pos {pos} mismatch"</span>
+
+<span class="cm"># V265F 突变</span>
+weev_v265f = weev_wt[:<span class="num">264</span>] + <span class="st">"F"</span> + weev_wt[<span class="num">265</span>:]
+</code></pre>
+
+<h3>3.2 结果分析（<code>05_analyze_af3.py</code>，核心逻辑）</h3>
+<pre><code><span class="kw">def</span> <span class="fn">load_best_model</span>(job_dir):
+    <span class="cm">"""读取5个候选模型，按 ranking_score 选最优"""</span>
+    summary_files = [f <span class="kw">for</span> f <span class="kw">in</span> <span class="fn">os.listdir</span>(job_dir)
+                     <span class="kw">if</span> <span class="st">"summary_confidences"</span> <span class="kw">in</span> f]
+    best_score = -<span class="num">1</span>
+    <span class="kw">for</span> sf <span class="kw">in</span> summary_files:
+        s = json.<span class="fn">load</span>(<span class="fn">open</span>(f<span class="st">"{job_dir}/{sf}"</span>))
+        <span class="kw">if</span> s.<span class="fn">get</span>(<span class="st">"ranking_score"</span>, <span class="num">0</span>) > best_score:
+            best_score = s[<span class="st">"ranking_score"</span>]
+            best_summary = s
+    <span class="kw">return</span> best_summary
+
+<span class="cm"># 关键指标提取</span>
+iptm   = summary[<span class="st">"iptm"</span>]                    <span class="cm"># 整体界面置信度</span>
+pae_AB = summary[<span class="st">"chain_pair_pae_min"</span>][<span class="num">0</span>][<span class="num">1</span>]  <span class="cm"># E2→受体最小PAE（Å）</span>
+</code></pre>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>4. 预测结果</h2>
+
+<h3>4.1 核心指标汇总</h3>
+<table>
+  <tr><th>Job</th><th>轮次</th><th>最优模型</th><th>ipTM</th><th>pae_AB (Å)</th><th>备注</th></tr>
+  <tr><td>WEEV_WT_VLDLR</td><td>R1</td><td>model_0</td><td>0.210</td><td>16.35</td><td>全长基线</td></tr>
+  <tr><td>WEEV_V265F_VLDLR</td><td>R1</td><td>model_0</td><td>0.160</td><td>20.18</td><td></td></tr>
+  <tr><td>WEEV_WT_PCDH10</td><td>R1</td><td>model_0</td><td>0.150</td><td>27.04</td><td>无模板</td></tr>
+  <tr><td>WEEV_V265F_PCDH10</td><td>R1</td><td>model_0</td><td>0.140</td><td>27.07</td><td></td></tr>
+  <tr class="best"><td>WEEV_WT_VLDLR_LA3</td><td>R2</td><td>model_0</td><td>0.290</td><td>13.33</td><td>📌 最优</td></tr>
+  <tr><td>WEEV_V265F_VLDLR_LA3</td><td>R2</td><td>model_0</td><td>0.180</td><td>17.29</td><td></td></tr>
+</table>
+
+<p>ipTM 判读标准：&gt;0.7 = 高置信；0.5–0.7 = 中等；&lt;0.5 = 低置信（当前全部处于低置信区间）。</p>
+
+<h3>4.2 综合对比图</h3>
+<div class="fig-wrap">
+  <img src="figures/af3_summary_all.png" alt="AF3 综合对比图">
+  <div class="fig-cap">
+    <strong>图1：两轮6组预测的 ipTM（左）和 pae_AB（右）对比。</strong>
+    蓝色 = WT，红色 = V265F；深色 = 第二轮（LA3截短）。
+    VLDLR_LA3 WT 取得最高置信度（ipTM=0.290，pae=13.3 Å）；PCDH10 两组均无界面信号（≈0.14）。
+  </div>
+</div>
+
+<h3>4.3 最优模型 PAE 热图</h3>
+<div class="fig-wrap">
+  <img src="figures/pae_WEEV_WT_VLDLR_LA3.png" alt="WT VLDLR LA3 PAE heatmap">
+  <div class="fig-cap">
+    <strong>图2：WEEV E2 WT + VLDLR LA2-LA4 最优模型的 PAE 矩阵（541×541 token）。</strong>
+    绿色虚线 = 链间分界（pos 416）；黄色虚线 = V265 位点。
+    对角线蓝色区域 = 各链内部折叠准确；右上/左下界面区域（E2⇔VLDLR）仍偏红，
+    但与全长VLDLR相比界面信号有所改善。
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>5. 结果解读</h2>
+
+<h3>5.1 VLDLR 截短有效，但绝对置信度仍低</h3>
+<p>将 VLDLR 从873aa截至125aa后，WT 的界面 ipTM 从0.210升至0.290，pae_AB 从16.35降至13.33 Å。
+这验证了"信号稀释"假说——全长VLDLR的8个LA重复使 AF3 无法聚焦真实结合区。
+然而，0.290 仍远低于 AF3 置信阈值（0.7），整体预测可信度有限。</p>
+
+<h3>5.2 模板偏差：AF3 结果不等于结合亲和力</h3>
+<div class="callout warn">
+  <strong>重要局限</strong>：PDB 9L1N 正是 WEEV E2 WT（V265）的晶体结构。
+  AF3 对 WT 预测有完美模板支撑，因此 WT 的 ipTM 系统性高于 V265F。
+  这一差距（Δ=0.110，R2轮）<em>不能</em>直接解读为"WT 与 VLDLR 亲和力更高"，
+  更可能反映模板偏差（template bias）而非真实生物学差异。
+</div>
+
+<h3>5.3 V265 不是直接接触残基</h3>
+<div class="callout finding">
+  <strong>有价值的阴性发现</strong>：对全部3种受体，265位残基的接触概率均接近于零（WT 和 V265F 均如此）。
+  这说明 V265F 的受体切换效应很可能是<strong>间接机制</strong>——
+  265位的 Val→Phe 侧链改变影响 E2 整体构象，进而调控远端结合界面，
+  而非265位本身直接插入受体结合口袋。
+  这与该位点位于 E2 疏水核心区而非暴露表面的结构逻辑一致。
+</div>
+
+<h3>5.4 PCDH10 界面不可预测</h3>
+<p>WT 和 V265F 对 PCDH10 的 ipTM 均约为0.14–0.15，无鉴别力。
+原因是 PDB 中没有任何甲病毒 E2–PCDH10 复合物结构，AF3 缺乏模板，预测纯靠序列推断。
+这一结果与 PCDH10 作为"新发现受体"的现实一致，不代表 E2-PCDH10 无结合。</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>6. 方法局限性</h2>
+
+<ul style="margin-left:18px; margin-top:8px;">
+  <li>AF3 ipTM 是预测<em>姿势</em>的置信度，不等于结合亲和力（ΔG）</li>
+  <li>模板偏差导致有晶体结构的 WT 系统性高于突变体</li>
+  <li>VLDLR 复合物缺乏实验结构，AF3 预测误差难以校验</li>
+  <li>AF3 Server 每组仅5个随机种子，采样可能不充分</li>
+  <li>未考虑 E2 三聚体状态和脂双层环境对构象的影响</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>7. 收获与未来展望</h2>
+
+<p>本次探索建立了迄今 <strong>WEEV E2 + VLDLR LA3</strong> 的最高质量 AF3 预测（ipTM=0.290），
+并通过两轮迭代设计（全长→截短）系统性地测试了输入序列长度对预测质量的影响。
+核心收获：</p>
+
+<ol style="margin-left:18px; margin-top:8px;">
+  <li>AF3 在有 PDB 模板时存在系统性模板偏差，这一局限需要在解读突变体预测结果时明确说明</li>
+  <li>V265 不在直接接触界面的发现，提示该残基通过变构而非直接接触机制影响受体选择</li>
+  <li>建立了可复用的分析流程（序列准备 → AF3 提交 → JSON 解析 → 可视化）</li>
+</ol>
+
+<h3>如果条件允许，下一步可以做：</h3>
+<table>
+  <tr><th>方向</th><th>工具</th><th>预期价值</th></tr>
+  <tr><td>引入 RosettaDock 重新打分</td><td>Rosetta 3</td><td>绕过 AF3 模板偏差，直接优化界面能量</td></tr>
+  <tr><td>MD 模拟验证预测构象稳定性</td><td>GROMACS / OpenMM</td><td>动态层面验证 AF3 静态预测</td></tr>
+  <tr><td>cryo-EM 实验结构验证</td><td>实验室设备</td><td>与计算预测交叉验证，校准偏差</td></tr>
+  <tr><td>SFV / EEEV 同源 E2 的同类分析</td><td>AF3 Server</td><td>检验方法在其他甲病毒中的一致性</td></tr>
+</table>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2>附录：项目文件结构</h2>
+
+<pre><code>02_定制层/
+├── scripts/
+│   ├── 04_prepare_af3_inputs.py   <span class="cm"># 序列准备与验证</span>
+│   └── 05_analyze_af3.py          <span class="cm"># JSON解析、PAE热图、接触概率、综合对比</span>
+├── data/
+│   └── af3_results/               <span class="cm"># 6个job，每个含5个模型（.cif + .json）</span>
+│       ├── WEEV_WT_VLDLR/
+│       ├── WEEV_V265F_VLDLR/
+│       ├── WEEV_WT_PCDH10/
+│       ├── WEEV_V265F_PCDH10/
+│       ├── WEEV_WT_VLDLR_LA3/     <span class="cm"># 第二轮</span>
+│       └── WEEV_V265F_VLDLR_LA3/  <span class="cm"># 第二轮</span>
+└── figures/
+    ├── af3_summary_all.png         <span class="cm"># ⭐ 套磁信附件</span>
+    ├── pae_WEEV_WT_VLDLR_LA3.png  <span class="cm"># ⭐ 套磁信附件</span>
+    ├── highlight_combined.png      <span class="cm"># 两图合并版</span>
+    └── ...（其余8张备用）
+</code></pre>
+
+<footer>
+  独立计算探索项目 · 2026年5月 · 工具：AlphaFold3 Server / Python 3 / NumPy / Matplotlib / Pillow<br>
+  本报告诚实呈现方法局限，结果定性为"低置信度探索性预测"而非实验验证结论。
+</footer>
+
+</body>
+</html>
