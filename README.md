@@ -15,7 +15,7 @@
 
 ## 📁 项目结构
 
-**快速导航** → [scripts/](scripts/) · [data/](data/) · [figures/](figures/) · [project_report.html](project_report.html)
+**快速导航** → [scripts/](https://github.com/ian4681/weev-e2-receptor-analysis/tree/main/scripts) · [data/](https://github.com/ian4681/weev-e2-receptor-analysis/tree/main/data) · [figures/](https://github.com/ian4681/weev-e2-receptor-analysis/tree/main/figures) · [在线分析报告](https://ian4681.github.io/weev-e2-receptor-analysis/)
 
 ```
 .
